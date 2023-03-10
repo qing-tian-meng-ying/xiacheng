@@ -26,7 +26,7 @@ html {
 
 button {
   position: relative;
-  padding: 20px;
+  padding: 50px;
   background-color: #FFC2D1;
   box-shadow: 5px 5px #FB6F92;
   border: none;
@@ -53,8 +53,8 @@ function randomNumber(min, max) {
 
 const btn = document.querySelector("button");
 btn.addEventListener("mouseover", event => {
-  let num = randomNumber(150, 300);
-  let num2 = randomNumber(100, 250);
+  let num = randomNumber(150, 600);
+  let num2 = randomNumber(100, 750);
   btn.innerText = "虾不到晴";
   event.target.style.left = `${num}px`;
   event.target.style.top = `${num2}px`;
