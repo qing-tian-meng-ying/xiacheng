@@ -1,4 +1,6 @@
 
+
+
 <!DOCTYPE html>
 <html lang="en" >
 
@@ -10,56 +12,150 @@
   
   
   
+  
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Sono:wght@800&display=swap');
-
-body,
-html {
-  height: 100%;
-  display: grid;
-  background-color: #FFE5EC;
+* {
+  margin: 0;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
-#container {
-  margin: auto;
+body {
+  background: #222;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
-
-button {
-  position: relative;
-  padding: 50px;
-  background-color: #FFC2D1;
-  box-shadow: 5px 5px #FB6F92;
+body canvas {
+  box-shadow: 0.2em 0.2em 2em #0008;
   border: none;
-  font-family: 'Sono', sans-serif;
+  outline: none;
 }
 </style>
 
 
-  
-
-
 </head>
 
-<bod >
-  <div id="container">
-<button type="button">来虾城</button>
-</div>
+<body >
+  <canvas id="canvas"></canvas>
+<script type="text/javascript" src="http://repo.bfw.wiki/bfwrepo/js/processing.min.js"></script>
 
-  
       <script >
-function randomNumber(min, max) {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
+var sketchProc = function(processingInstance) {
+  with (processingInstance) {
+    size(600, 600); 
+    frameRate(60);    
+    smooth();
+    
+    var fontSize = 80;
+    var content = "点击虾城";
+
+
+
+textFont(createFont("Arial Bold"), fontSize);
+textAlign(CENTER, CENTER);
+fill(0);
+text(content, 10, 10, 580, 580);
+
+var particleColors = [
+    color(247, 52, 72),
+    color(245, 235, 88),
+    color(36, 112, 166),
+    color(72, 191, 242),
+    color(192, 93, 245)
+];
+
+var particles = (function() {
+    var arr = [];
+    for(var x = 0; x <= 600; x+= fontSize * 0.04) {
+        for(var y = 0; y <= 600; y+= fontSize * 0.04) {
+            if(get(x, y) === -16777216) {
+                arr.push({
+                    x: x,
+                    y: y,
+                    bx: x,
+                    by: y,
+                    tx: 0,
+                    ty: 0,
+                    vx: 0.1,
+                    vy: 0.1,
+                    xoff: random(-5, 5),
+                    yoff: random(-5, 5),
+                    angle: radians(random(360)) | 0,
+                    rot: random(-5, 5),
+                    diameter: fontSize * 0.05,
+                    color: particleColors[random(particleColors.length) | 0]
+                });
+            }
+        }
+    }
+    return arr;
+})();
+
+var displaceParticles = function() {
+    for(var i = 0; i < particles.length; i++) {
+        var p = particles[i];
+        
+        p.tx = random(-width, width);
+        p.ty = random(-height, height);
+        
+        p.vx = random(0.08, 0.12);
+        p.vy = random(0.08, 0.12);
+    }
+};
+
+var runParticles = function() {
+    pushMatrix();
+        translate(300, 300);
+        rotate(radians(sin(frameCount * 0.05) * 5));
+        translate(-300, -300);
+        
+        noStroke();
+        
+        for(var i = 0; i < particles.length; i++) {
+            var p = particles[i];
+            p.angle+= p.rot;
+            
+            p.tx = lerp(p.tx, 0, p.vx);
+            p.ty = lerp(p.ty, 0, p.vy);
+            
+            p.x = lerp(p.x, p.bx + p.tx, p.vx);
+            p.y = lerp(p.y, p.by + p.ty, p.vy);
+            
+            translate(p.x, p.y);
+                rotate(radians(p.angle));
+                fill(p.color);
+                triangle(p.xoff, p.yoff - p.diameter, p.diameter, p.diameter, -p.diameter, p.diameter);
+                rotate(radians(-p.angle));
+            translate(-p.x, -p.y);
+        }
+    popMatrix();
+};
+
+draw = function() {
+    background(34, 34, 34);
+    
+    runParticles();
+    
+    // fill(255, 10);
+    textSize(40);
+    // text(particles.length + " particles", 300, 550);
+    fill(255, 30);
+    text("click", 300, 100);
+    text("继续虾城", 10, 10, 580, 580);
+};
+
+mouseClicked = function() {
+    displaceParticles();
+};
+    
+  }
 }
 
-const btn = document.querySelector("button");
-btn.addEventListener("mouseover", event => {
-  let num = randomNumber(150, 600);
-  let num2 = randomNumber(100, 750);
-  btn.innerText = "虾不到晴";
-  event.target.style.left = `${num}px`;
-  event.target.style.top = `${num2}px`;
-});
-
+var canvas = document.getElementById("canvas"); 
+var processingInstance = new Processing(canvas, sketchProc);
     </script>
 
   
@@ -67,3 +163,4 @@ btn.addEventListener("mouseover", event => {
 </body>
 
 </html>
+ 
